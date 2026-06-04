@@ -6,11 +6,13 @@
 ## 📖 Overview
 The **Inventory Service** maintains the system of record for all computer parts in the store. It is responsible for serving product data to the frontend, synchronously accepting administrative updates, and asynchronously managing stock reservations in response to incoming orders.
 
-[⬅️ Back to Main Repository](https://github.com/yourusername/bitlord-computer-parts)
+[⬅️ Back to Main Repository](https://github.com/MalingaBandara/Bitlord-Computer-Parts)
 
 ### 🔷 System Flow Diagram
 
 ![Inventory Service Architecture](./Diagram/Inventory_Service_Diagram.png)
+
+---
 
 ## 🛠️ Tech Stack
 - **Language**: Java 17
