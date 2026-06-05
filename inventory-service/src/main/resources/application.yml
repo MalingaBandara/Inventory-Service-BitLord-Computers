@@ -1,55 +1,58 @@
 server:
-  port: 8082
+  port: 8082 # Inventory service runs on port 8082
 
 spring:
   application:
-    name: inventory-service
+    name: inventory-service # Service name used for Eureka registration and tracing
+
   datasource:
-    url: jdbc:mysql://localhost:3309/bitlord_inventory?createDatabaseIfNotExist=true
+    url: jdbc:mysql://localhost:3309/bitlord_inventory?createDatabaseIfNotExist=true # MySQL connection — auto-creates the database if it doesn't exist
     username: root
     password: bitlord123
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: com.mysql.cj.jdbc.Driver # MySQL JDBC driver
+
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: update # Auto-updates the schema on startup without dropping existing data
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQLDialect
-    show-sql: true
+        dialect: org.hibernate.dialect.MySQLDialect # Tells Hibernate to generate MySQL-compatible SQL
+    show-sql: true # Prints all executed SQL queries to the console — useful for debugging
+
   kafka:
-    bootstrap-servers: localhost:9093
+    bootstrap-servers: localhost:9093 # Kafka broker address this service connects to
     producer:
-      key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer # Serializes Kafka message keys as plain strings
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer # Serializes Kafka message values as JSON
     consumer:
-      group-id: inventory-group
-      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      group-id: inventory-group # Consumer group ID — messages are load-balanced across all instances in this group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer # Deserializes Kafka message keys from string
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer # Deserializes Kafka message values from JSON
       properties:
-        spring.json.trusted.packages: "*"
+        spring.json.trusted.packages: "*" # Trusts all packages during JSON deserialization — avoids class whitelisting errors
 
 eureka:
   client:
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://localhost:8761/eureka/ # Eureka server URL — this service registers itself here for discovery
   instance:
-    prefer-ip-address: true
+    prefer-ip-address: true # Registers with IP address instead of hostname — more reliable in local/Docker environments
 
 management:
   tracing:
     sampling:
-      probability: 1.0
+      probability: 1.0 # Captures 100% of requests for distributed tracing — set lower (e.g. 0.1) in production
   zipkin:
     tracing:
-      endpoint: http://localhost:9412/api/v2/spans
+      endpoint: http://localhost:9412/api/v2/spans # Zipkin server endpoint where trace data is sent
   endpoints:
     web:
       exposure:
-        include: health, info, prometheus, metrics
+        include: health, info, prometheus, metrics # Exposes these actuator endpoints over HTTP
   metrics:
     export:
       prometheus:
-        enabled: true
+        enabled: true # Enables Prometheus metrics scraping at /actuator/prometheus
 
 # docker exec -it <container_name> mysql -u root -p
-#docker exec -it bitlord-computer-parts-mysql_inventory-1 mysql -u root -p
+# docker exec -it bitlord-computer-parts-mysql_inventory-1 mysql -u root -p
